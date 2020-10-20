@@ -16,10 +16,18 @@ import (
 	"sort"
 )
 
+type Chooseable interface {
+	WeightedScore() uint
+}
+
 // Choice is a generic wrapper that can be used to add weights for any item.
 type Choice struct {
 	Item   interface{}
 	Weight uint
+}
+
+func (c Choice) WeightedScore() uint {
+	return c.Weight
 }
 
 // NewChoice creates a new Choice with specified item and weight.
@@ -99,6 +107,46 @@ func (c Chooser) PickSource(rs *rand.Rand) interface{} {
 	r := rs.Intn(c.max) + 1
 	i := searchInts(c.totals, r)
 	return c.data[i].Item
+}
+
+// A IndexChoosers blah blah ***....
+type IndexChooser struct {
+	positions []int
+	totals    []int
+	max       int
+}
+
+// NewIndexChooser constructs an IndexChooser for a slice of Chooseable elements.
+func NewIndexChooser(cs []Chooseable) IndexChooser {
+	// TODO: can't sort in place!
+	//
+	// need to log original position
+	type index struct {
+		pos    int
+		weight uint
+	}
+	tmpSlice := make([]index, len(cs))
+	for i, c := range cs {
+		tmpSlice[i] = index{pos: i, weight: c.WeightedScore()}
+	}
+	sort.Slice(tmpSlice, func(i, j int) bool {
+		return tmpSlice[i].weight < tmpSlice[j].weight
+	})
+
+	positions := make([]int, len(tmpSlice))
+	totals := make([]int, len(tmpSlice))
+	runningTotal := 0
+	for i, el := range tmpSlice {
+		runningTotal += int(el.weight)
+		totals[i] = runningTotal
+		positions[i] = el.pos
+	}
+	return IndexChooser{positions: positions, totals: totals, max: runningTotal}
+}
+
+func (ic IndexChooser) Pick() int {
+	r := rand.Intn(ic.max) + 1
+	return searchInts(ic.totals, r)
 }
 
 // The standard library sort.SearchInts() just wraps the generic sort.Search()
