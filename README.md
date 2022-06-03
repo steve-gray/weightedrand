@@ -23,17 +23,17 @@ func main() {
     rand.Seed(time.Now().UTC().UnixNano()) // always seed random!
 
     chooser, _ := wr.NewChooser(
-        wr.Choice{Item: "🍒", Weight: 0},
-        wr.Choice{Item: "🍋", Weight: 1},
-        wr.Choice{Item: "🍊", Weight: 1},
-        wr.Choice{Item: "🍉", Weight: 3},
-        wr.Choice{Item: "🥑", Weight: 5},
+        wr.Choice[rune]{Item: "🍒", Weight: 0},
+        wr.Choice[rune]{Item: "🍋", Weight: 1},
+        wr.Choice[rune]{Item: "🍊", Weight: 1},
+        wr.Choice[rune]{Item: "🍉", Weight: 3},
+        wr.Choice[rune]{Item: "🥑", Weight: 5},
     )
     /* The following will print 🍋 and 🍊 with 0.1 probability, 🍉 with 0.3
     probability, and 🥑 with 0.5 probability. 🍒 will never be printed. (Note
     the weights don't have to add up to 10, that was just done here to make the
     example easier to read.) */
-    result := chooser.Pick().(string)
+    result := chooser.Pick()
     fmt.Println(result)
 }
 ```

@@ -13,11 +13,11 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano()) // always seed random!
 
 	c, err := wr.NewChooser(
-		wr.Choice{Item: '🍒', Weight: 0}, // alternatively: wr.NewChoice('🍒', 0)
-		wr.Choice{Item: '🍋', Weight: 1},
-		wr.Choice{Item: '🍊', Weight: 1},
-		wr.Choice{Item: '🍉', Weight: 3},
-		wr.Choice{Item: '🥑', Weight: 5},
+		wr.Choice[rune]{Item: '🍒', Weight: 0}, // alternatively: wr.NewChoice('🍒', 0)
+		wr.Choice[rune]{Item: '🍋', Weight: 1},
+		wr.Choice[rune]{Item: '🍊', Weight: 1},
+		wr.Choice[rune]{Item: '🍉', Weight: 3},
+		wr.Choice[rune]{Item: '🥑', Weight: 5},
 	)
 	if err != nil {
 		log.Fatal(err)
